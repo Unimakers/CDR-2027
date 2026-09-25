@@ -10,4 +10,3 @@ has_children: true
 {: Information }
 > Cette page d'accueil est dédiée aux projets d'Emrick PETIT dans le cadre de la Coupe de France de Robotique (CDR 2027)
 > 
-> relie vos séances à votre page.
