@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Étudiant 2
+title: Romain_Vantalon
 parent: Journal de bord
 has_children: true
 ---
