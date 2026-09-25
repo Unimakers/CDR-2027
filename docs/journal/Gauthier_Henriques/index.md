@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Étudiant 1
+title: Gauthier_Henriques
 parent: Journal de bord
 has_children: true
 ---
