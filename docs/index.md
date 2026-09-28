@@ -21,7 +21,7 @@ permalink: /
 Décrivez ici en quelques lignes l'objectif de votre projet. Quel est son but ?
 À qui est-il destiné ? Quel problème cherche-t-il à résoudre ?
 
-[Notre repo GitHub]({{https://github.com/Unimakers/CDR-2027}}){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
+[Notre repo GitHub](https://github.com/Unimakers/CDR-2027){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
 [Notre projet sur Onshape](https://cad.onshape.com/){: .btn .btn-green .fs-5 .mb-4 .mb-md-0 }
 
 {: .a_modifier }
@@ -31,6 +31,7 @@ Décrivez ici en quelques lignes l'objectif de votre projet. Quel est son but ?
 ## Le projet en 3D
 
 {% include model3d.html src="assets/models/base_roulante.glb" alt="Modèle 3D de la base roulante du robot principal" %}
+
 
 #{: .a_modifier }
 #> Exportez votre assemblage au format **GLB** (glTF binaire) depuis Onshape
