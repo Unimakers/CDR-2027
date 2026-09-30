@@ -1,3 +1,10 @@
+---
+layout: default
+title: Emma_Vilain
+parent: Emma_Vilain
+has_children: true
+---
+
 # Entrée 1 : 23/09/2026
 
 Découverte documentation des années précédentes : pour visualiser objectifs, la structure d'un robot principale, les composants principaux, ce que l'on peut améliorer ou reprendre des années précédentes.
