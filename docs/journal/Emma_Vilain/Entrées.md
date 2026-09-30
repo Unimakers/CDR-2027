@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Emma_Vilain
+title: Entree_journal
 parent: Emma_Vilain
 ---
 
