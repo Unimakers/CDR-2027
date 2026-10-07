@@ -22,7 +22,7 @@ Décrivez ici en quelques lignes l'objectif de votre projet. Quel est son but ?
 À qui est-il destiné ? Quel problème cherche-t-il à résoudre ?
 
 [Notre repo GitHub](https://github.com/Unimakers/CDR-2027){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
-[Notre projet sur Onshape](https://cad.onshape.com/){: .btn .btn-green .fs-5 .mb-4 .mb-md-0 }
+[Notre projet sur Onshape](https://cad.onshape.com/documents/b25fb3f08e38c1a44eca64a4/w/633bb7cc54cf7ff51ee1ee5a/e/397e9d6b0b22f9a9006ec7dc?renderMode=0&uiState=6ac5575a31dabe2c1b29afb3){: .btn .btn-green .fs-5 .mb-4 .mb-md-0 }
 
 {: .a_modifier }
 > Remplacez le lien du bouton « Onshape » par le lien de partage de votre document.
@@ -30,15 +30,15 @@ Décrivez ici en quelques lignes l'objectif de votre projet. Quel est son but ?
 
 ## Le projet en 3D
 
-{% include model3d.html src="assets/models/base_roulante.glb" alt="Modèle 3D de la base roulante du robot principal" %}
+{% include model3d.html src="assets/models/base roulante.glb" alt="Modèle 3D de la base roulante du robot principal" %}
 
-
-#{: .a_modifier }
-#> Exportez votre assemblage au format **GLB** (glTF binaire) depuis Onshape
-#> (clic droit sur l'onglet de l'assemblage > Exporter), placez-le dans `docs/assets/models/`,
-#> remplacez `Otto.glb` ci-dessus par le nom de votre fichier, puis supprimez `Otto.glb`.
-#> Gardez le fichier sous **25 Mo**.
-
+<!---
+{: .a_modifier }
+> Exportez votre assemblage au format **GLB** (glTF binaire) depuis Onshape
+> (clic droit sur l'onglet de l'assemblage > Exporter), placez-le dans `docs/assets/models/`,
+> remplacez `Otto.glb` ci-dessus par le nom de votre fichier, puis supprimez `Otto.glb`.
+> Gardez le fichier sous **25 Mo**.
+--->
 ## Poster
 
 ![Poster du projet](assets/images/poster.jpg)
