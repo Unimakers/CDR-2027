@@ -48,3 +48,6 @@ callouts:
   info:
     title: Information
     color: blue
+  important:
+    title: Important
+    color: yellow
