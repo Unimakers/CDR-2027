@@ -112,3 +112,8 @@ const uint8_t ACTUATOR_PCF_BIT[ACTUATORS_PER_PCF] = {1, 3, 5, 7, 0, 2, 4, 6};
 #define LD06_TX_PIN 43 // ESP32 U0TXD -> LD06 RX
 #define LD06_BAUDRATE 230400
 #define LD06_PWM_PIN -1 // motor speed PWM, "pwm", schematic: GPIO39 (lib: 255 = not used)
+
+
+
+
+static_assert( PCF_ICM6_ADDR == PCF_ICM7_ADDR || PCF_ICM6_ADDR == PCF_ICM8_ADDR || PCF_ICM7_ADDR == PCF_ICM8_ADDR , "2 or more PCF8574T have the same I2C address, check the solder jumpers");
