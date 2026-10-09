@@ -30,6 +30,14 @@
 #define STEP_6_PIN -1 // schematic: GPIO47
 #define DIR_6_PIN -1  // schematic: GPIO48
 
+// If Stepper is inverted, set to true, else false. This is used to invert the direction of the stepper motor.
+#define STEPPER_1_INVERTED false
+#define STEPPER_2_INVERTED false
+#define STEPPER_3_INVERTED false
+#define STEPPER_4_INVERTED false
+#define STEPPER_5_INVERTED false
+#define STEPPER_6_INVERTED false
+
 // Motion parameters (placeholders)
 #define STEPPER_STEPS_PER_REV -1       // full steps per motor revolution
 #define STEPPER_MICROSTEPS -1          // set by the TMC2209 MS1/MS2 configuration
