@@ -38,7 +38,11 @@ step 6: écran (selon temps restant);
     info:plateau: 3m par 2m avec X: longueur, y: largeur;
 
 Tests sur mobilité: (en relative/coordonnées par rapport à un emplacement/ puis en absolue/coordonnées géographique/)
+
 Rouler droit: sur 10cm, 20cm, 50cm, 1m et plus;
+
 Tourner: à 10°, 50°, 100°, 180° et 360°;
+
 Serpentin: de droite à gauche et de gauche à droite;
-Simulation game.
+
+Simulation de game.
