@@ -27,7 +27,7 @@ step 6: écran (selon temps restant);
 Attention: Aucun moyen de tester pour l'instant !!!
 
 
-# Batterie de tests: 40 tests par valeur (plateau: 3m par 2m, X longueur, y largeur);
+### Batterie de tests: 40 tests par valeur (plateau: 3m par 2m, X longueur, y largeur);
 
 Tests sur mobilité: (en relative/coordonnées par rapport à un emplacement/ puis en absolue/coordonnées géographique/)
 Rouler droit: sur 10cm, 20cm, 50cm, 1m et plus;
