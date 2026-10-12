@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Ajaz_Agbetiafa
-parent: Journal de bord
-has_children: true
+title: Mememtoo
+parent: Ajaz_Agbetiafa
+grand_parent: Journal de bord
 ---
 
 
