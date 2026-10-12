@@ -38,7 +38,7 @@ static bool beginPca(int index) {
     return true;
 }
 
-// Connector n (1..32) -> PCA index and channel, see board_pins.h
+// Connector n (1..32) -> PCA index and output, see the wiring table in board_pins.h
 static bool findPcaChannel(const char* name, int connector, int* pca, int* channel) {
     if (connector < 1 || connector > ACTUATOR_CONNECTOR_COUNT) {
         Serial.printf("[CONFIG] %s: connector %d does not exist (1..%d)\n",
@@ -46,7 +46,7 @@ static bool findPcaChannel(const char* name, int connector, int* pca, int* chann
         return false;
     }
     *pca = (connector - 1) / PCA_CHANNEL_COUNT;
-    *channel = (connector - 1) % PCA_CHANNEL_COUNT;
+    *channel = ACTUATOR_PCA_CHANNEL[(connector - 1) % PCA_CHANNEL_COUNT];
     if (!pcaReady[*pca]) {
         Serial.printf("[ACT] %s: PCA9685 #%d not available\n", name, *pca + 1);
         return false;
