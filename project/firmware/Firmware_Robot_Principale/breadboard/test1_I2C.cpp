@@ -1,3 +1,7 @@
+// TEST 1 C++: serial + I2C scan
+// RESULTS : OK
+
+
 #include <Arduino.h>
 #include <Wire.h>
 #include "config.h"
