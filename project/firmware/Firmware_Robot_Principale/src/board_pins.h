@@ -30,11 +30,11 @@
 #define STEP_3_PIN -1 // schematic: GPIO35
 #define DIR_3_PIN -1  // schematic: GPIO36
 #define STEP_4_PIN -1 // schematic: GPIO37
-#define DIR_4_PIN -1  // schematic: GPIO38 (onboard RGB LED on DevKitC-1 v1.1)
+#define DIR_4_PIN -1  // schematic: GPIO38 
 #define STEP_5_PIN -1 // schematic: GPIO15
 #define DIR_5_PIN -1  // schematic: GPIO16
 #define STEP_6_PIN -1 // schematic: GPIO47
-#define DIR_6_PIN -1  // schematic: GPIO48 (onboard RGB LED on DevKitC-1 v1.0)
+#define DIR_6_PIN -1  // schematic: GPIO48 
 
 // Shared ~EN of the 6 drivers, active LOW.
 // schematic: GPIO45. GPIO45 is a strapping pin (flash voltage): a pull-up on this
@@ -51,30 +51,35 @@
 #define EN_5VP_PIN -1 // ON/OFF of the 5VP converter PS1 (servos/pumps), schematic: GPIO3
 
 // ---------------------------------------------------------------------------
-// I2C bus (frozen): 3x PCF8574T ICM6..ICM8 + J2 connector, 4.7k pull-ups on board
+// I2C bus (frozen): 2x PCA9685 soldered on the board + J2 connector, 4.7k pull-ups on board
 // ---------------------------------------------------------------------------
 #define I2C_SDA_PIN 9
 #define I2C_SCL_PIN 8
 
-// PCF8574T address = 0x20 + (A2 A1 A0). Each Ax has a 4.7k pull-down; soldering its
-// jumper sets it to 1. With no jumper soldered all three answer on 0x20 -> conflict.
-#define PCF_COUNT 3
-#define PCF_ICM6_ADDR -1 // jumpers JP7 (A0), JP8 (A1), JP9 (A2)
-#define PCF_ICM7_ADDR -1 // jumpers JP10 (A0), JP11 (A1), JP12 (A2)
-#define PCF_ICM8_ADDR -1 // jumpers JP13 (A0), JP14 (A1), JP15 (A2)
-// ~INT outputs are only pulled up, not wired to the ESP32: inputs must be polled.
+// ---------------------------------------------------------------------------
+// PCA9685 PWM drivers: signal only. The actuators get 5VP + GND from the board,
+// not from the PCA. Servos and pumps share the same connectors.
+// Not on the KiCad schematic yet: everything below is to be filled when it is.
+// ---------------------------------------------------------------------------
+#define PCA_COUNT 2
+#define PCA_CHANNEL_COUNT 16 // outputs per PCA9685
 
-// ---------------------------------------------------------------------------
-// Actuator connectors "Servo1".."Servo24": 5VP + GND + one signal line on a PCF8574 output.
-// ICM6 -> connectors 1..8, ICM7 -> 9..16, ICM8 -> 17..24.
-// Inside each group the wiring is interleaved, identical on the 3 PCF:
-//   connector in group : 1  2  3  4  5  6  7  8
-//   PCF output         : P1 P3 P5 P7 P0 P2 P4 P6
-// For connector n (1..24): pcf = (n - 1) / 8, bit = ACTUATOR_PCF_BIT[(n - 1) % 8]
-// ---------------------------------------------------------------------------
-#define ACTUATOR_CONNECTOR_COUNT 24
-#define ACTUATORS_PER_PCF 8
-const uint8_t ACTUATOR_PCF_BIT[ACTUATORS_PER_PCF] = {1, 3, 5, 7, 0, 2, 4, 6};
+// Address = 0x40 + (A5..A0 jumpers). 0x70 is the PCA9685 "all call" address
+// (enabled at power-on): never give it to a chip.
+#define PCA_1_ADDR -1
+#define PCA_2_ADDR -1
+
+// ~OE: shared output enable, active LOW. HIGH cuts every PCA output at once.
+#define PCA_OE_PIN -1
+
+// Actuator connectors: connector n (1..32) -> PCA (n - 1) / 16, channel (n - 1) % 16.
+// To check against the schematic once routed (the PCF version was interleaved).
+#define ACTUATOR_CONNECTOR_COUNT (PCA_COUNT * PCA_CHANNEL_COUNT)
+
+static_assert(PCA_1_ADDR == -1 || PCA_2_ADDR == -1 || PCA_1_ADDR != PCA_2_ADDR,
+              "Both PCA9685 have the same I2C address, check the solder jumpers");
+static_assert(PCA_1_ADDR != 0x70 && PCA_2_ADDR != 0x70,
+              "0x70 is the PCA9685 all-call address, choose another one");
 
 // ---------------------------------------------------------------------------
 // TFT screen (J1, SPI, no reset line on the schematic)
@@ -112,8 +117,3 @@ const uint8_t ACTUATOR_PCF_BIT[ACTUATORS_PER_PCF] = {1, 3, 5, 7, 0, 2, 4, 6};
 #define LD06_TX_PIN 43 // ESP32 U0TXD -> LD06 RX
 #define LD06_BAUDRATE 230400
 #define LD06_PWM_PIN -1 // motor speed PWM, "pwm", schematic: GPIO39 (lib: 255 = not used)
-
-
-
-
-static_assert( PCF_ICM6_ADDR == PCF_ICM7_ADDR || PCF_ICM6_ADDR == PCF_ICM8_ADDR || PCF_ICM7_ADDR == PCF_ICM8_ADDR , "2 or more PCF8574T have the same I2C address, check the solder jumpers");
