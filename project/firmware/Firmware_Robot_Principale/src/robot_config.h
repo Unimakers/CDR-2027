@@ -47,6 +47,18 @@ static_assert(WHEEL_RIGHT_SLOT == 0 || WHEEL_RIGHT_SLOT == 1, "WHEEL_RIGHT_SLOT 
 static_assert(WHEEL_LEFT_SLOT != WHEEL_RIGHT_SLOT, "Both wheels cannot use the same slot");
 
 // ---------------------------------------------------------------------------
+// PCA9685 PWM (servos and pumps)
+// The frequency is shared by the 16 channels of a chip. 50 Hz is what servos expect;
+// pumps only need fully ON / fully OFF, which works at any frequency.
+// ---------------------------------------------------------------------------
+#define PCA_PWM_FREQUENCY_HZ 50
+#define PCA_OSCILLATOR_HZ 25000000 // nominal; measure and adjust if servo angles are off
+
+// Default servo pulse range, can be overridden per servo in the actuator config
+#define SERVO_DEFAULT_MIN_PULSE_US 500  // pulse width at 0 deg
+#define SERVO_DEFAULT_MAX_PULSE_US 2500 // pulse width at 180 deg
+
+// ---------------------------------------------------------------------------
 // LIDAR LD06 filtering (see setDistanceRange / setAngleRange / setIntensityThreshold)
 // Set real values before calling enableFiltering(): the library stores them unsigned,
 // so -1 would turn into 65535 / 255 and filter out every point.
