@@ -11,7 +11,7 @@
 #define DEBUG_SERIAL true
 
 // match duration
-#define MATCH_DURATION 100 // in seconds
+#define MATCH_DURATION 100000UL // in milliseconds (100s)
 
 // ---------------------------------------------------------------------------
 // Stepper slots: one line per TMC2209 slot (see the slot table in board_pins.h)

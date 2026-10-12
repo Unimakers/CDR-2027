@@ -18,7 +18,7 @@ bool matchHasStarted() {
 
 bool matchHasEnded() {
     if (!started) return false;
-    bool ended = (millis() - matchStartMs) >= MATCH_DURATION * 1000UL;
+    bool ended = (millis() - matchStartMs) >= MATCH_DURATION;
     if (ended && !endLogged) {
         endLogged = true;
         Serial.println("[MATCH] Match time is over");
