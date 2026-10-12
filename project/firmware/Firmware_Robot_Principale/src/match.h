@@ -1,4 +1,4 @@
-// Match timer: started when the tirette is pulled, ends after MATCH_DURATION seconds.
+// Match timer: started when the tirette is pulled, ends after MATCH_DURATION milliseconds.
 // Every blocking function of the firmware checks matchHasEnded(), so strategies never have to.
 
 #pragma once
