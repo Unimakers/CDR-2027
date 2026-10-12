@@ -47,6 +47,12 @@ static_assert(WHEEL_RIGHT_SLOT == 0 || WHEEL_RIGHT_SLOT == 1, "WHEEL_RIGHT_SLOT 
 static_assert(WHEEL_LEFT_SLOT != WHEEL_RIGHT_SLOT, "Both wheels cannot use the same slot");
 
 // ---------------------------------------------------------------------------
+// Stepper actuators (slots 2..5): no limit switch, homing is done by driving
+// into the mechanical end stop at a fraction of the slot's maxSpeedHz.
+// ---------------------------------------------------------------------------
+#define ACTUATOR_HOMING_SPEED_PERCENT 20
+
+// ---------------------------------------------------------------------------
 // PCA9685 PWM (servos and pumps)
 // The frequency is shared by the 16 channels of a chip. 50 Hz is what servos expect;
 // pumps only need fully ON / fully OFF, which works at any frequency.
