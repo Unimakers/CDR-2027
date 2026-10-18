@@ -5,6 +5,9 @@ parent: Documentation
 nav_order: 1
 ---
 
+{: .important}
+> Le règlement générale a changé. Celui de l'année a été publié dans sa version définitive avec le détails des points gagnés par action.
+
 # Les PAMI
 
 Les Petits Actionneurs Mobiles Indépendants (PAMI), sont des petits robots actifs à partir de la 85ème seconde d'une partie. Ils doivent effectuer diverse actions indépendament du robot principal. La réalisation de ces actions octroit un certain nombre de point et peuvent faire une grande différence à l'issue de la partie.
@@ -18,13 +21,13 @@ Bien que généralement moins impressionnant que le robot principal, les PAMI so
 > Le non-respect d'une de ces contraintes peux mener à l'impossibilité d'homologuer les PAMI
 > et donc les empêcherais de jouer en partie réelle !
 
-Cette section est un résumé des contraintes PAMI du Règlement général de la CDR qu vous pouvez visionner et télécharger en cliquant sur <a href="https://www.eurobot.org/wp-content/uploads/2026/09/Eurobot_General_Rules_SR_FR.pdf" download>ce lien</a> (à partir de la page 16 pour la section PAMI)
+Cette section est un résumé des contraintes PAMI du Règlement général de la CDR qu vous pouvez visionner et télécharger en cliquant sur <a href="../assets/documents/Eurobot_General_Rules_SR_FR.pdf" download>ce lien</a> (à partir de la page 16 pour la section PAMI)
 
 | Type de Contrainte | Point concernée | Contrainte |
 |--------------------|-----------------|------------|
-| Physique | Hauteur | 150mm maximum |
-| Physique | Périmètre (non-déployé) | 400mm < Périmètre <= 600 mm |
-| Physique | Périmètre (déployé) | 400mm < Périmètre <= 700mm |
+| Physique | Hauteur | 150mm < Hauteur < 175mm |
+| Physique | Périmètre (non-déployé) | diamètre > 80mm et périmètre inférieur à 600 mm |
+| Physique | Périmètre (déployé) | inférieur à 700mm |
 | Physique | Poids | < 1.5kg |
 | Homologation | Chassis | Le chassis des PAMI doivent posséder un espace de 30mmX30mm afin d'accueillir l'autocollant d'homologation |
 | Jeu | Départ | Doivent tenir entièrement dans la zone de départ |
@@ -44,9 +47,9 @@ Cette année, les PAMI sont à l'honneur avec un total de **3** actions possible
 
 | Action | Principe | Points octroyés |
 |--------|----------|-----------------|
-| Assiéger | Les PAMI devront se rendre dans les douves adverses (voir tapis de jeu en annexe) | X pts / douve prise |
-| Duel | Les PAMI devront "attaquer" un PAMI adverse à l'aide d'un actionneur fait spécifiquement pour cette action | Y pts / PAMI attaqué |
-| Catapultage | Les PAMI devront lancer un boulet (voir annexe) dans la cour du chateau adverse (1 boulet par PAMI) | Z pts / boulet dans la cour |
+| Assiéger | Les PAMI devront se rendre dans les douves adverses (voir tapis de jeu en annexe) | 5 pts / douve prise |
+| Duel | Les PAMI devront "attaquer" un PAMI adverse à l'aide d'un actionneur fait spécifiquement pour cette action | 5 plts si au moins un PAMI attaque un PAMI adverse |
+| Catapultage | Les PAMI devront lancer un boulet (voir annexe) dans la cour du chateau adverse (1 boulet par PAMI et 10 boulets par équipe) | 5 pts si 1 boulet dans la cour adverse, 20pts si 3 boulets ou plus dans la cour adverse |
 
 {: .warning }
 > Tout les PAMI ne sont pas obligés de faire les trois actions.
@@ -102,6 +105,8 @@ La carte électronique est avant tout un système de connexions (routes) qui rel
 
 ![Carte PAMI légendée (Verso)](<../assets/images/img_documentation/Carte PAM legende-verso.png>)
 ![Carte PAMI légendée (Recto)](<../assets/images/img_documentation/Carte PAM legende-recto.png>)
+
+
 
 <!--
 {: .a_modifier}
