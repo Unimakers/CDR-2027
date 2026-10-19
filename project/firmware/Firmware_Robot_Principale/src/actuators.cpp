@@ -1,3 +1,9 @@
+// Actuators, see actuators.h for the usage.
+// Layout of this file:
+//   1. the two PCA9685 chips (I2C PWM drivers behind the 32 actuator connectors)
+//   2. the registry: list of every declared actuator, checked and started by actuatorsBegin()
+//   3. StepperActuator, ServoActuator, PumpActuator
+
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <math.h>
@@ -15,10 +21,12 @@ static Adafruit_PWMServoDriver pcaDrivers[PCA_COUNT] = {
     Adafruit_PWMServoDriver((uint8_t)PCA_1_ADDR, Wire),
     Adafruit_PWMServoDriver((uint8_t)PCA_2_ADDR, Wire),
 };
-static bool pcaReady[PCA_COUNT] = {false, false};
+static bool pcaReady[PCA_COUNT] = {false, false}; // true once the chip answered in beginPca()
 
 #define PCA_FULL_ON 4095 // setPin(): 4095 = constant HIGH output
 
+// Starts one PCA9685: checks that it answers, sets the PWM frequency and switches
+// its 16 outputs off. Returns false if the chip is missing or its address is not set.
 static bool beginPca(int index) {
     int address = PCA_ADDRESSES[index];
     if (address < 0) {
@@ -29,6 +37,8 @@ static bool beginPca(int index) {
         Serial.printf("[ACT] ERROR: no PCA9685 answering at 0x%02X\n", address);
         return false;
     }
+    // The library computes the prescaler and the servo pulse widths from this frequency:
+    // a wrong value shifts every servo angle (see PCA_OSCILLATOR_HZ in robot_config.h).
     pcaDrivers[index].setOscillatorFrequency(PCA_OSCILLATOR_HZ);
     pcaDrivers[index].setPWMFreq(PCA_PWM_FREQUENCY_HZ);
     for (int channel = 0; channel < PCA_CHANNEL_COUNT; channel++) {
@@ -39,6 +49,8 @@ static bool beginPca(int index) {
 }
 
 // Connector n (1..32) -> PCA index and output, see the wiring table in board_pins.h
+// Example: connector 5 -> PCA 0 (U3), output ACTUATOR_PCA_CHANNEL[4] = LED0.
+// Returns false if the connector does not exist or if its PCA9685 did not start.
 static bool findPcaChannel(const char* name, int connector, int* pca, int* channel) {
     if (connector < 1 || connector > ACTUATOR_CONNECTOR_COUNT) {
         Serial.printf("[CONFIG] %s: connector %d does not exist (1..%d)\n",
@@ -65,8 +77,9 @@ static ServoActuator* servoActuators[ACTUATOR_CONNECTOR_COUNT];
 static int servoActuatorCount = 0;
 static PumpActuator* pumpActuators[ACTUATOR_CONNECTOR_COUNT];
 static int pumpActuatorCount = 0;
-static bool registryFull = false;
+static bool registryFull = false; // an actuator was declared but did not fit in its array
 
+// Servos and pumps share the same 32 connectors: one connector = one actuator.
 static bool isConnectorUsedTwice(int connector) {
     int uses = 0;
     for (int i = 0; i < servoActuatorCount; i++) {
@@ -78,6 +91,8 @@ static bool isConnectorUsedTwice(int connector) {
     return uses > 1;
 }
 
+// Wiring errors that each actuator cannot see on its own: a stepper actuator on a wheel
+// slot, two stepper actuators on the same slot, two servos/pumps on the same connector.
 static bool checkActuatorConflicts() {
     bool ok = true;
     for (int i = 0; i < stepperActuatorCount; i++) {
@@ -106,6 +121,8 @@ static bool checkActuatorConflicts() {
 bool actuatorsBegin() {
     bool ok = true;
 
+    // ~OE is held HIGH by its pull-up since power-on: keep it HIGH while the chips are
+    // configured, so no servo twitches and no pump starts on a random power-on state.
     if (PCA_OE_PIN >= 0) {
         pinMode(PCA_OE_PIN, OUTPUT);
         digitalWrite(PCA_OE_PIN, HIGH); // outputs off while configuring
@@ -113,6 +130,7 @@ bool actuatorsBegin() {
     for (int i = 0; i < PCA_COUNT; i++) {
         pcaReady[i] = beginPca(i);
     }
+    // Every output is now at 0: enable them (~OE active LOW)
     if (PCA_OE_PIN >= 0) {
         digitalWrite(PCA_OE_PIN, LOW);
     }
@@ -123,6 +141,7 @@ bool actuatorsBegin() {
     }
     if (!checkActuatorConflicts()) ok = false;
 
+    // Start every actuator even if one fails: the valid ones stay usable
     for (int i = 0; i < stepperActuatorCount; i++) {
         if (!stepperActuators[i]->begin()) ok = false;
     }
@@ -139,6 +158,8 @@ bool actuatorsBegin() {
     return ok;
 }
 
+// Called at match end. Servos are left as they are: their position is held by the
+// PCA9685 and cutting them would drop whatever they are holding.
 void actuatorsStopAll() {
     for (int i = 0; i < stepperActuatorCount; i++) {
         stepperActuators[i]->stop();
@@ -152,6 +173,8 @@ void actuatorsStopAll() {
 // ---------------------------------------------------------------------------
 // StepperActuator
 // ---------------------------------------------------------------------------
+// Constructors run before setup() (global objects): they only register the actuator.
+// Serial is not started yet, so every check and log is done later in begin().
 StepperActuator::StepperActuator(const char* name, int slot, float unitsPerMotorRev)
     : _name(name), _slot(slot), _unitsPerMotorRev(unitsPerMotorRev),
       _stepsPerUnit(0), _stepper(nullptr) {
@@ -167,6 +190,7 @@ bool StepperActuator::begin() {
         Serial.printf("[CONFIG] %s: unitsPerMotorRev must be > 0\n", _name);
         return false;
     }
+    // Already reported by checkActuatorConflicts(): never take a wheel motor
     if (_slot == WHEEL_LEFT_SLOT || _slot == WHEEL_RIGHT_SLOT) return false;
 
     _stepper = connectStepperSlot(_slot);
@@ -174,6 +198,7 @@ bool StepperActuator::begin() {
         Serial.printf("[ACT] %s: slot %d unusable\n", _name, _slot);
         return false;
     }
+    // e.g. 200 steps x 16 microsteps / 40 mm per turn = 80 microsteps per mm
     _stepsPerUnit = stepperSlotStepsPerRev(_slot) / _unitsPerMotorRev;
     return true;
 }
@@ -190,6 +215,8 @@ bool StepperActuator::canRun(const char* command) {
     return true;
 }
 
+// The pulses are generated in the background: this loop only watches for the end of
+// the move and for the end of the match.
 bool StepperActuator::waitUntilDone() {
     while (_stepper->isRunning()) {
         if (matchHasEnded()) {
@@ -204,6 +231,7 @@ bool StepperActuator::waitUntilDone() {
 void StepperActuator::startMoveTo(float position) {
     if (!canRun("moveTo")) return;
     Serial.printf("[ACT] %s moveTo %.1f\n", _name, position);
+    // units -> microsteps, rounded to the nearest microstep
     MoveResultCode result = _stepper->moveTo(lroundf(position * _stepsPerUnit));
     if (result != MOVE_OK) {
         Serial.printf("[ACT] %s: moveTo refused by FastAccelStepper (code %d)\n", _name, (int)result);
@@ -211,6 +239,7 @@ void StepperActuator::startMoveTo(float position) {
 }
 
 bool StepperActuator::moveTo(float position) {
+    // checked here too so that a refused command returns false instead of waiting
     if (!canRun("moveTo")) return false;
     startMoveTo(position);
     return waitUntilDone();
@@ -225,11 +254,14 @@ void StepperActuator::homeAgainstStop(float travel) {
     Serial.printf("[ACT] %s homing against end stop (%.1f)\n", _name, travel);
 
     const StepperSlot& cfg = STEPPER_SLOTS[_slot];
+    // Slow relative move of the full travel: the mechanism reaches the stop before the
+    // end of the move and the motor skips steps there until the move is over.
     _stepper->setSpeedInHz(cfg.maxSpeedHz * ACTUATOR_HOMING_SPEED_PERCENT / 100);
     _stepper->move(lroundf(travel * _stepsPerUnit));
     bool completed = waitUntilDone();
-    _stepper->setSpeedInHz(cfg.maxSpeedHz);
+    _stepper->setSpeedInHz(cfg.maxSpeedHz); // back to the normal speed for the next moves
 
+    // Interrupted by the match end: the mechanism may not be on its stop, keep the old zero
     if (completed) setZero();
 }
 
@@ -280,6 +312,7 @@ void ServoActuator::setAngle(float angleDeg) {
         return;
     }
     angleDeg = constrain(angleDeg, 0.0f, 180.0f);
+    // Linear interpolation: 0 deg -> minPulseUs, 180 deg -> maxPulseUs
     int pulseUs = _minPulseUs + lroundf((_maxPulseUs - _minPulseUs) * angleDeg / 180.0f);
     pcaDrivers[_pca].writeMicroseconds(_channel, pulseUs);
     _angleDeg = angleDeg;
@@ -306,7 +339,7 @@ PumpActuator::PumpActuator(const char* name, int connector)
 
 bool PumpActuator::begin() {
     _ready = findPcaChannel(_name, _connector, &_pca, &_channel);
-    if (_ready) write(false);
+    if (_ready) write(false); // known state: off
     return _ready;
 }
 
