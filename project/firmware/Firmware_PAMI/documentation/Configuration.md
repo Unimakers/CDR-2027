@@ -54,6 +54,31 @@ La valeur de `MICROSTEPS` doit correspondre aux niveaux MS1/MS2 envoyés au driv
 #define TMC2209_MS1_VALUE  true   // HIGH pour 1/16
 #define TMC2209_MS2_VALUE  true   // HIGH pour 1/16
 ```
+---
+
+```cpp
+
+// PIN des servomoteurs
+#define SERVO1 4
+#define SERVO2 5
+
+
+// PIN activation élec
+#define ENABLE_PIN 8
+
+// PIN tirette
+#define TIRETTE_PIN 10
+
+#define SWITCH_PIN 9
+
+// PIN du télémètre à ultrason
+#define TRIGER_PIN 7
+#define ECHO_PIN 6
+#define S_ITERATIONS 5
+
+// intervalles
+#define SONAR_PING_INTERVAL 33
+```
 
 ---
 
@@ -103,9 +128,3 @@ Tous les boutons utilisent `INPUT_PULLUP`. Adapter `COLOR_SWITCH_YELLOW_STATE` s
 
 #define DEBUG_SERIAL  true  // false = désactive tous les logs Serial
 ```
-
----
-
-## Étape suivante
-
-→ [Écrire une stratégie](Strategies.md)

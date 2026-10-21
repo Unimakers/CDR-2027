@@ -1,8 +1,12 @@
 #include <Arduino.h>
 #include <Adafruit_PWMServoDriver.h>
+#include <FastAccelStepper.h>
 #include <ESP32Servo.h>
+#include <TMCStepper.h>
 #include "config.h"
 
+FastAccelStepper leftMotor;
+FastAccelStepper rightMotor;
 Servo servo1;
 
 // put function declarations here:
@@ -19,11 +23,13 @@ void loop() {
   // put your main code here, to run repeatedly:
 
   servo1.write(0);   // position 0 degrés
-  delay(1000);       // attendre 1 seconde  
+  delay(1000);       // attendre 1 seconde 
+  servo1.write(90); // position centrale
+  delay(1000);       // attendre 1 seconde 
   servo1.write(180); // position 180 degrés
   delay(1000);       // attendre 1 seconde
   servo1.write(90); // position centrale
-  delay(1000);       // attendre 1 seconde
+  delay(1000);      // attendre 1 seconde
 }
 
 // put function definitions here:

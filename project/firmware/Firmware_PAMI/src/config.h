@@ -16,6 +16,9 @@
 #define MICROSTEPS           16      // Microstepping réglé sur le TMC2209
 #define GEAR_RATIO           1.0f    // 1.0 = pas de réduction
 
+#define TMC2209_MS1_VALUE  HIGH   // HIGH for 1/16
+#define TMC2209_MS2_VALUE  HIGH   // HIGH for 1/16
+
 // PIN des servomoteurs
 #define SERVO1 4
 #define SERVO2 5
