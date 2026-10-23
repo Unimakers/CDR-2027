@@ -6,6 +6,9 @@
 #define LEFT_DIR_PIN 2
 #define LEFT_STEP_PIN 3
 
+// PIN activation des moteurs pas-à-pas
+#define ENABLE_PIN 8
+
 // Si un moteur tourne dans le sens inverse, mettre sur "true"
 #define LEFT_MOTOR_INVERTED   true // synchronisation des roues
 #define RIGHT_MOTOR_INVERTED  false
@@ -23,10 +26,6 @@
 #define SERVO1 4
 #define SERVO2 5
 
-
-// PIN activation élec
-#define ENABLE_PIN 8
-
 // PIN tirette
 #define TIRETTE_PIN 10
 
@@ -35,7 +34,6 @@
 // PIN du télémètre à ultrason
 #define TRIGER_PIN 7
 #define ECHO_PIN 6
-#define S_ITERATIONS 5
 
 // intervalles
 #define SONAR_PING_INTERVAL 33
