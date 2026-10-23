@@ -3,33 +3,60 @@
 #include <FastAccelStepper.h>
 #include <ESP32Servo.h>
 #include <TMCStepper.h>
+#include <Wire.h>
 #include "config.h"
 
-FastAccelStepper leftMotor;
-FastAccelStepper rightMotor;
-Servo servo1;
+FastAccelStepperEngine engine;
+FastAccelStepper* leftMotor = nullptr;
+FastAccelStepper* rightMotor = nullptr;
+
 
 // put function declarations here:
 int myFunction(int, int);
 
 void setup() {
-  servo1.setPeriodHertz(50);       // fréquence habituelle des servos
-  servo1.attach(SERVO2, 500, 2400); // GPIO, impulsions min/max en microsecondes
-  servo1.write(90);                 // position centrale
-  delay(10000);                     // attendre 10 secondes
+  // put your setup code here, to run once:
+  Serial.begin(115200);
+  Serial.println("Starting setup...");
+
+  // Initialize the FastAccelStepper engine
+  engine.init();
+
+  // Connect the left and right motors to their respective step pins
+  leftMotor = engine.stepperConnectToPin(LEFT_STEP_PIN);
+  rightMotor = engine.stepperConnectToPin(RIGHT_STEP_PIN);
+
+  if (leftMotor == nullptr || rightMotor == nullptr) {
+    Serial.println("Error: Could not connect to stepper motors.");
+    while (true); // Stop execution if motors cannot be connected
+  }
+
+  // Set direction pins for the motors
+  leftMotor->setDirectionPin(LEFT_DIR_PIN, true);
+  rightMotor->setDirectionPin(RIGHT_DIR_PIN, true);
+
+  // Set enable pins for the motors
+  leftMotor->setEnablePin(ENABLE_PIN);
+  rightMotor->setEnablePin(ENABLE_PIN);
+
+  
+  // Enable the motors
+  leftMotor->enableOutputs();
+  rightMotor->enableOutputs();
+
+  Serial.println("Setup complete.");
+  
+
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-
-  servo1.write(0);   // position 0 degrés
-  delay(1000);       // attendre 1 seconde 
-  servo1.write(90); // position centrale
-  delay(1000);       // attendre 1 seconde 
-  servo1.write(180); // position 180 degrés
-  delay(1000);       // attendre 1 seconde
-  servo1.write(90); // position centrale
-  delay(1000);      // attendre 1 seconde
+  leftMotor->move(1600);
+  rightMotor->move(1600);
+  delay(5000);
+  leftMotor->move(-1600);
+  rightMotor->move(-1600);
+  delay(5000);
 }
 
 // put function definitions here:
