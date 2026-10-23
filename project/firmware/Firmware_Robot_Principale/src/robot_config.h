@@ -32,12 +32,10 @@ const StepperSlot STEPPER_SLOTS[STEPPER_SLOT_COUNT] = {
     {STEP_2_PIN, DIR_2_PIN, false,    -1,          -1,         -1,         -1}, // slot 1
     {STEP_3_PIN, DIR_3_PIN, false,    -1,          -1,         -1,         -1}, // slot 2
     {STEP_4_PIN, DIR_4_PIN, false,    -1,          -1,         -1,         -1}, // slot 3
-    {STEP_5_PIN, DIR_5_PIN, false,    -1,          -1,         -1,         -1}, // slot 4
-    {STEP_6_PIN, DIR_6_PIN, false,    -1,          -1,         -1,         -1}, // slot 5
 };
 
 // ---------------------------------------------------------------------------
-// Wheels: always on slots 0 and 1. Slots 2..5 are free for actuators.
+// Wheels: always on slots 0 and 1. Slots 2..3 are free for actuators.
 // ---------------------------------------------------------------------------
 #define WHEEL_LEFT_SLOT 0
 #define WHEEL_RIGHT_SLOT 1
@@ -47,7 +45,7 @@ static_assert(WHEEL_RIGHT_SLOT == 0 || WHEEL_RIGHT_SLOT == 1, "WHEEL_RIGHT_SLOT 
 static_assert(WHEEL_LEFT_SLOT != WHEEL_RIGHT_SLOT, "Both wheels cannot use the same slot");
 
 // ---------------------------------------------------------------------------
-// Stepper actuators (slots 2..5): no limit switch, homing is done by driving
+// Stepper actuators (slots 2..3): no limit switch, homing is done by driving
 // into the mechanical end stop at a fraction of the slot's maxSpeedHz.
 // ---------------------------------------------------------------------------
 #define ACTUATOR_HOMING_SPEED_PERCENT 20
