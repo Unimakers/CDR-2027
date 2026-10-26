@@ -14,11 +14,11 @@ Cette carte permet de contrôler un PAMI dans son ensemble. Une seule carte perm
 
 ## Schéma
 
-{% include kicad.html src="../../assets/kicad/PAMI/carte pamis.kicad_sch" controles="full" %}
+{% include kicad.html src="../../assets/kicad/PAMI/carte-pamis.kicad_sch" controles="full" %}
 
 ## PCB
 
-{% include kicad.html src="../../assets/kicad/PAMI/carte pamis.kicad_pcb" controles="full" %}
+{% include kicad.html src="../../assets/kicad/PAMI/carte-pamis.kicad_pcb" controles="full" %}
 
 ## Nomenclature
 
@@ -26,3 +26,4 @@ Cette carte permet de contrôler un PAMI dans son ensemble. Une seule carte perm
 |---|---|---|---|---|
 | U1 | Microcontrôleur | ESP32-S3-DevKitC-1 | 1 | … |
 | U2-U3 | Controleur steppers | TMC2209 | 2 | … |
+| en cour de documentation... | | |
