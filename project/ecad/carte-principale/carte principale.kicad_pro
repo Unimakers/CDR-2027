@@ -52,8 +52,8 @@
         "zones": {
           "border_display_style": 2,
           "border_hatch_pitch": 0.5,
-          "corner_radius": 0.0,
-          "corner_smoothing": 0,
+          "corner_radius": 0.5,
+          "corner_smoothing": 1,
           "fill_mode": 0,
           "hatch_gap": 1.5,
           "hatch_orientation": 0.0,
@@ -536,6 +536,7 @@
       "pin_to_pin": "warning",
       "power_pin_not_driven": "error",
       "same_local_global_label": "warning",
+      "same_local_global_power": "warning",
       "similar_label_and_power": "warning",
       "similar_labels": "warning",
       "similar_power": "warning",
@@ -817,7 +818,7 @@
         "uuid": "0951ec4b-785e-40e7-be1a-e3633841d8e8"
       }
     ],
-    "used_designators": "U3-11,ICM1-8,#PWR2,#PWR4-5,#PWR9-11,#PWR16-27,#PWR29-32,#PWR35-97,#PWR99-108,#PWR111-139,#PWR141-150,#PWR152-163,#PWR181-188,NP1,NP3,J1-4,J6-44,R4-45,Tirette1,C2-52,JP1-21,Teamswitch1-2,Teamswitch4,XT30_5VP1,Batt1,BAU1,D5-6,XT30_3.3V1,DT6-11,F2,K2,H1-4,XT30-32,switch1-3,Button1,XT30_24V1,XT30_5VL1,XT30_BATT1,Servo2-32",
+    "used_designators": "",
     "variants": []
   },
   "sheets": [

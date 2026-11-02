@@ -1,3 +1,9 @@
+// CRC-8 lookup table of the LD06 protocol (polynomial 0x4D, initial value 0), copied from
+// the LDRobot documentation. CrcTable[crc ^ byte] gives the new CRC after one more byte:
+// one table read per byte instead of 8 shift/xor steps.
+// Every byte of a packet except the last one goes through it; the result must equal the
+// last byte (see LD06::readDataCRC()).
+
 #ifndef ld06crc_h
 #define ld06crc_h
 

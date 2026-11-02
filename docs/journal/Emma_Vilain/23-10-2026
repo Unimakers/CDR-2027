@@ -1,0 +1,15 @@
+---
+layout: default
+title: "23-10-2026"
+parent: Emma_Vilain
+---
+
+## Entrée du 23/10/2026
+Prise en main de la breadboard, test cablage autour des pin de la carte ESP32-S3-WROOM1.
+Recherche documentation sur ESP32-S3-WROOM1.
+
+Docu le + interessant: https://christianpc.fr/guide-complet-demarrer-avec-lesp32-s3-wroom-1-n16r8-de-a-a-z/
+
+Compiler code test sur vscode: aller dans PIO et ouvrir document src/, copier code test dna smain.cpp
+
+Etape pas à pas avec https://cloudlasalle-my.sharepoint.com/:w:/r/personal/emma_vilain_etu_unilasalle_fr/_layouts/15/Doc.aspx?sourcedoc=%7B43ED7F2A-722C-4299-81D6-90566BCE85EE%7D&file=Tuto%20%25u2014%20main%20de%20test%20sur%20breadboard.docx&action=default&mobileredirect=true
