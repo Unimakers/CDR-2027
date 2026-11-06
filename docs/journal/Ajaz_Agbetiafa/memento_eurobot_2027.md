@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "Memento"
+title: "memento_eurobot_2027.md"
 parent: Ajaz_Agbetiafa
 grand_parent: Journal de bord
 ---
