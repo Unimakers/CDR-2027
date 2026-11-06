@@ -7,59 +7,131 @@
 #include "config.h"
 
 FastAccelStepperEngine engine;
-FastAccelStepper* leftMotor = nullptr;
-FastAccelStepper* rightMotor = nullptr;
+FastAccelStepper *leftmotor = nullptr;
+FastAccelStepper *rightmotor = nullptr;
+
+Servo servo1;
 
 
-// put function declarations here:
-int myFunction(int, int);
+long DistanceToStep(float distanceMm) {
+  return lroundf(distanceMm / wheelCircumferenceMm *stepsPerWheelRevolution);
+}
 
-void setup() {
-  // put your setup code here, to run once:
+void waitForMotors() {
+  while (leftmotor->isRunning() || rightmotor->isRunning()) {
+    delay(1);
+  }
+}
+
+void go(float distanceMm)
+{
+   if (!LEFT_MOTOR_INVERTED && !RIGHT_MOTOR_INVERTED) // Si les deux moteurs vont dans le même sens
+   {
+    leftmotor->move(DistanceToStep(distanceMm));
+    rightmotor->move(DistanceToStep(distanceMm));
+    waitForMotors();
+   }
+   else if (!LEFT_MOTOR_INVERTED && RIGHT_MOTOR_INVERTED) // Si le moteur droit est inversé
+   {
+    leftmotor->move(DistanceToStep(distanceMm));
+    rightmotor->move(-DistanceToStep(distanceMm));
+    waitForMotors();
+   }
+    else if (LEFT_MOTOR_INVERTED && !RIGHT_MOTOR_INVERTED) // Si le moteur gauche est inversé
+   {
+    leftmotor->move(-DistanceToStep(distanceMm));
+    rightmotor->move(DistanceToStep(distanceMm));
+    waitForMotors();
+   }
+   else if (!LEFT_MOTOR_INVERTED && !RIGHT_MOTOR_INVERTED) // Si les deux moteurs sont inversé (ne devrait pas arriver)
+   {
+    leftmotor->move(-DistanceToStep(distanceMm));
+    rightmotor->move(-DistanceToStep(distanceMm));
+    waitForMotors();
+   }
+}
+
+// void turn(float angle)
+// {
+
+//    if (!LEFT_MOTOR_INVERTED && !RIGHT_MOTOR_INVERTED)
+//    {
+//     leftmotor->move();
+//     rightmotor->move();
+//     waitForMotors();
+//    }
+//    else if (!LEFT_MOTOR_INVERTED && RIGHT_MOTOR_INVERTED)
+//    {
+//     leftmotor->move();
+//     rightmotor->move();
+//     waitForMotors();
+//    }
+//     else if (LEFT_MOTOR_INVERTED && !RIGHT_MOTOR_INVERTED)
+//    {
+//     leftmotor->move();
+//     rightmotor->move();
+//     waitForMotors();
+//    }
+// }
+
+void setup() { // put your setup code here, to run once:
   Serial.begin(115200);
-  Serial.println("Starting setup...");
-
+  delay(1000);
+  
+  servo1.setPeriodHertz(50);        // fréquence habituelle des servos
+  servo1.attach(SERVO2);            // déclaration du servo
+  servo1.write(90);                 // position centrale
+  
   // Initialize the FastAccelStepper engine
   engine.init();
+  Serial.println("Motor init");
+  delay(500);
 
-  // Connect the left and right motors to their respective step pins
-  leftMotor = engine.stepperConnectToPin(LEFT_STEP_PIN);
-  rightMotor = engine.stepperConnectToPin(RIGHT_STEP_PIN);
-
-  if (leftMotor == nullptr || rightMotor == nullptr) {
-    Serial.println("Error: Could not connect to stepper motors.");
-    while (true); // Stop execution if motors cannot be connected
+  leftmotor = engine.stepperConnectToPin(LEFT_STEP_PIN, DRIVER_RMT);
+  rightmotor = engine.stepperConnectToPin(RIGHT_STEP_PIN, DRIVER_RMT);
+  if (leftmotor == nullptr || rightmotor == nullptr) {
+    Serial.println("Error: Could not connect to motors");
+    while (true) {
+      delay(1000);
+    }
+  }
+  else
+  {
+    Serial.println("Motors connected");
   }
 
-  // Set direction pins for the motors
-  leftMotor->setDirectionPin(LEFT_DIR_PIN, true);
-  rightMotor->setDirectionPin(RIGHT_DIR_PIN, true);
+  leftmotor->setDirectionPin(LEFT_DIR_PIN);
+  rightmotor->setDirectionPin(RIGHT_DIR_PIN);
+  Serial.println("DIR Pins connected");
 
-  // Set enable pins for the motors
-  leftMotor->setEnablePin(ENABLE_PIN);
-  rightMotor->setEnablePin(ENABLE_PIN);
+  leftmotor->setEnablePin(ENABLE_PIN);
+  rightmotor->setEnablePin(ENABLE_PIN);
+  Serial.println("Motors enabled");
 
-  
-  // Enable the motors
-  leftMotor->enableOutputs();
-  rightMotor->enableOutputs();
+  leftmotor->setSpeedInHz(STEPPER_SPEED_HZ);
+  rightmotor->setSpeedInHz(STEPPER_SPEED_HZ);
+  Serial.println("Motorts speed set");
 
-  Serial.println("Setup complete.");
-  
+  leftmotor->setAcceleration(STEPPER_ACCELERATION);
+  rightmotor->setAcceleration(STEPPER_ACCELERATION);
+  Serial.println("Motorts acceleration set");
 
+  leftmotor->enableOutputs();
+  rightmotor->enableOutputs();
+  Serial.println("Stepper motors ready");
 }
+
 
 void loop() {
   // put your main code here, to run repeatedly:
-  leftMotor->move(1600);
-  rightMotor->move(1600);
-  delay(5000);
-  leftMotor->move(-1600);
-  rightMotor->move(-1600);
-  delay(5000);
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  servo1.write(0);
+  delay(500);
+  servo1.write(180);
+  delay(500);
+  servo1.write(90);
+  delay(500);
+  go(50);
+  delay(2000);
+  go(-50);
+  delay(500);
 }
