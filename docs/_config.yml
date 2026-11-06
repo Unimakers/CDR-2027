@@ -1,6 +1,6 @@
 title: CDR 2027 - Unimaker I1/I2 # À MODIFIER : le nom de votre projet
 description: Documentation des projets lié à la participation d'Unimaker à la coupe de France de Robotique # À MODIFIER : une phrase qui résume votre projet
-favicon_ico: "docs/assets/images/blason.ico"
+favicon_ico: "/assets/images/blason.ico"
 # À MODIFIER : l'adresse de VOTRE repo GitHub (sans "/" à la fin).
 # Elle sert aux boutons et liens vers vos fichiers sources, et au lien
 # "Modifier cette page sur GitHub" en bas de chaque page.
