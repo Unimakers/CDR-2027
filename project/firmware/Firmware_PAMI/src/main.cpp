@@ -13,11 +13,19 @@ FastAccelStepper *rightmotor = nullptr;
 Servo servo1;
 
 
-long DistanceToStep(float distanceMm) {
+float DistanceToStep(float distanceMm) 
+{
   return lroundf(distanceMm / wheelCircumferenceMm *stepsPerWheelRevolution);
 }
 
-void waitForMotors() {
+float AngleToStep(float angleDeg)
+{
+  float wheelTravelMm = (angleDeg * PI / 180.0f) * (WHEEL_BASE_MM / 2);
+  return lroundf(wheelTravelMm / wheelCircumferenceMm * stepsPerWheelRevolution);
+}
+
+void WaitForMotors() 
+{
   while (leftmotor->isRunning() || rightmotor->isRunning()) {
     delay(1);
   }
@@ -25,54 +33,17 @@ void waitForMotors() {
 
 void go(float distanceMm)
 {
-   if (!LEFT_MOTOR_INVERTED && !RIGHT_MOTOR_INVERTED) // Si les deux moteurs vont dans le même sens
-   {
-    leftmotor->move(DistanceToStep(distanceMm));
-    rightmotor->move(DistanceToStep(distanceMm));
-    waitForMotors();
-   }
-   else if (!LEFT_MOTOR_INVERTED && RIGHT_MOTOR_INVERTED) // Si le moteur droit est inversé
-   {
-    leftmotor->move(DistanceToStep(distanceMm));
-    rightmotor->move(-DistanceToStep(distanceMm));
-    waitForMotors();
-   }
-    else if (LEFT_MOTOR_INVERTED && !RIGHT_MOTOR_INVERTED) // Si le moteur gauche est inversé
-   {
-    leftmotor->move(-DistanceToStep(distanceMm));
-    rightmotor->move(DistanceToStep(distanceMm));
-    waitForMotors();
-   }
-   else if (!LEFT_MOTOR_INVERTED && !RIGHT_MOTOR_INVERTED) // Si les deux moteurs sont inversé (ne devrait pas arriver)
-   {
-    leftmotor->move(-DistanceToStep(distanceMm));
-    rightmotor->move(-DistanceToStep(distanceMm));
-    waitForMotors();
-   }
+  leftmotor->move(!LEFT_MOTOR_INVERTED ? DistanceToStep(distanceMm) : -DistanceToStep(distanceMm));
+  rightmotor->move(!RIGHT_MOTOR_INVERTED ? DistanceToStep(distanceMm) : -DistanceToStep(distanceMm));
+  WaitForMotors();
 }
 
-// void turn(float angle)
-// {
-
-//    if (!LEFT_MOTOR_INVERTED && !RIGHT_MOTOR_INVERTED)
-//    {
-//     leftmotor->move();
-//     rightmotor->move();
-//     waitForMotors();
-//    }
-//    else if (!LEFT_MOTOR_INVERTED && RIGHT_MOTOR_INVERTED)
-//    {
-//     leftmotor->move();
-//     rightmotor->move();
-//     waitForMotors();
-//    }
-//     else if (LEFT_MOTOR_INVERTED && !RIGHT_MOTOR_INVERTED)
-//    {
-//     leftmotor->move();
-//     rightmotor->move();
-//     waitForMotors();
-//    }
-// }
+void turn(float angle)
+{
+  leftmotor->move(!LEFT_MOTOR_INVERTED ? AngleToStep(angle) : -AngleToStep(angle));
+  rightmotor->move(!RIGHT_MOTOR_INVERTED ? -AngleToStep(angle) : AngleToStep(angle));
+  WaitForMotors();
+}
 
 void setup() { // put your setup code here, to run once:
   Serial.begin(115200);
@@ -121,7 +92,6 @@ void setup() { // put your setup code here, to run once:
   Serial.println("Stepper motors ready");
 }
 
-
 void loop() {
   // put your main code here, to run repeatedly:
   servo1.write(0);
@@ -130,6 +100,11 @@ void loop() {
   delay(500);
   servo1.write(90);
   delay(500);
+  turn(90);
+  delay(500);
+  turn(-180);
+  delay(500);
+  turn(90);
   go(50);
   delay(2000);
   go(-50);
