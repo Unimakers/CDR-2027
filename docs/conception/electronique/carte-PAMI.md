@@ -14,11 +14,11 @@ Cette carte permet de contrôler un PAMI dans son ensemble. Une seule carte perm
 
 ## Schéma
 
-{% include kicad.html src="../../assets/kicad/PAMI/carte-pamis.kicad_sch" controles="full" %}
+{% include kicad.html src="../../assets/kicad/PAMI/carte-pamis.kicad_sch" %}
 
 ## PCB
 
-{% include kicad.html src="../../assets/kicad/PAMI/carte-pamis.kicad_pcb" controles="full" %}
+{% include kicad.html src="../../assets/kicad/PAMI/carte-pamis.kicad_pcb" %}
 
 ## Nomenclature
 
