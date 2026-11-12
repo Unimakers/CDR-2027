@@ -5,61 +5,70 @@
 #include <TMCStepper.h>
 #include <Wire.h>
 #include "config.h"
+#include "functions.h"
 
-FastAccelStepperEngine engine;
-FastAccelStepper* leftMotor = nullptr;
-FastAccelStepper* rightMotor = nullptr;
-
-
-// put function declarations here:
-int myFunction(int, int);
-
-void setup() {
-  // put your setup code here, to run once:
+void setup() { // put your setup code here, to run once:
   Serial.begin(115200);
-  Serial.println("Starting setup...");
-
+  delay(1000);
+  
+  sword.setPeriodHertz(50);        // fréquence habituelle des servos
+  sword.attach(SWORD_PIN);            // déclaration du servo
+  sword.write(90);                 // position centrale
+  
   // Initialize the FastAccelStepper engine
   engine.init();
+  Serial.println("Motor init");
+  delay(500);
 
-  // Connect the left and right motors to their respective step pins
-  leftMotor = engine.stepperConnectToPin(LEFT_STEP_PIN);
-  rightMotor = engine.stepperConnectToPin(RIGHT_STEP_PIN);
-
-  if (leftMotor == nullptr || rightMotor == nullptr) {
-    Serial.println("Error: Could not connect to stepper motors.");
-    while (true); // Stop execution if motors cannot be connected
+  leftmotor = engine.stepperConnectToPin(LEFT_STEP_PIN, DRIVER_RMT);
+  rightmotor = engine.stepperConnectToPin(RIGHT_STEP_PIN, DRIVER_RMT);
+  if (leftmotor == nullptr || rightmotor == nullptr) {
+    Serial.println("Error: Could not connect to motors");
+    while (true) {
+      delay(1000);
+    }
+  }
+  else
+  {
+    Serial.println("Motors connected");
   }
 
-  // Set direction pins for the motors
-  leftMotor->setDirectionPin(LEFT_DIR_PIN, true);
-  rightMotor->setDirectionPin(RIGHT_DIR_PIN, true);
+  leftmotor->setDirectionPin(LEFT_DIR_PIN);
+  rightmotor->setDirectionPin(RIGHT_DIR_PIN);
+  Serial.println("DIR Pins connected");
 
-  // Set enable pins for the motors
-  leftMotor->setEnablePin(ENABLE_PIN);
-  rightMotor->setEnablePin(ENABLE_PIN);
+  leftmotor->setEnablePin(ENABLE_PIN);
+  rightmotor->setEnablePin(ENABLE_PIN);
+  Serial.println("Motors enabled");
 
-  
-  // Enable the motors
-  leftMotor->enableOutputs();
-  rightMotor->enableOutputs();
+  leftmotor->setSpeedInHz(STEPPER_SPEED_HZ);
+  rightmotor->setSpeedInHz(STEPPER_SPEED_HZ);
+  Serial.println("Motorts speed set");
 
-  Serial.println("Setup complete.");
-  
+  leftmotor->setAcceleration(STEPPER_ACCELERATION);
+  rightmotor->setAcceleration(STEPPER_ACCELERATION);
+  Serial.println("Motorts acceleration set");
 
+  leftmotor->enableOutputs();
+  rightmotor->enableOutputs();
+  Serial.println("Stepper motors ready");
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  leftMotor->move(1600);
-  rightMotor->move(1600);
-  delay(5000);
-  leftMotor->move(-1600);
-  rightMotor->move(-1600);
-  delay(5000);
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  sword.write(0);
+  delay(750);
+  sword.write(180);
+  delay(750);
+  sword.write(90);
+  delay(750);
+  turn(90);
+  delay(500);
+  turn(-180);
+  delay(500);
+  turn(90);
+  go(200);
+  delay(1000);
+  go(-200);
+  delay(500);
 }
