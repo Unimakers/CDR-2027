@@ -5,53 +5,15 @@
 #include <TMCStepper.h>
 #include <Wire.h>
 #include "config.h"
-
-FastAccelStepperEngine engine;
-FastAccelStepper *leftmotor = nullptr;
-FastAccelStepper *rightmotor = nullptr;
-
-Servo servo1;
-
-
-float DistanceToStep(float distanceMm) 
-{
-  return lroundf((distanceMm / wheelCircumferenceMm *stepsPerWheelRevolution)/2);
-}
-
-float AngleToStep(float angleDeg)
-{
-  float wheelTravelMm = (angleDeg * PI / 180.0f) * (WHEEL_BASE_MM / 4);
-  return lroundf(wheelTravelMm / wheelCircumferenceMm * stepsPerWheelRevolution);
-}
-
-void WaitForMotors() 
-{
-  while (leftmotor->isRunning() || rightmotor->isRunning()) {
-    delay(1);
-  }
-}
-
-void go(float distanceMm)
-{
-  leftmotor->move(!LEFT_MOTOR_INVERTED ? DistanceToStep(distanceMm) : -DistanceToStep(distanceMm));
-  rightmotor->move(!RIGHT_MOTOR_INVERTED ? DistanceToStep(distanceMm) : -DistanceToStep(distanceMm));
-  WaitForMotors();
-}
-
-void turn(float angle)
-{
-  leftmotor->move(!LEFT_MOTOR_INVERTED ? AngleToStep(angle) : -AngleToStep(angle));
-  rightmotor->move(!RIGHT_MOTOR_INVERTED ? -AngleToStep(angle) : AngleToStep(angle));
-  WaitForMotors();
-}
+#include "functions.h"
 
 void setup() { // put your setup code here, to run once:
   Serial.begin(115200);
   delay(1000);
   
-  servo1.setPeriodHertz(50);        // fréquence habituelle des servos
-  servo1.attach(SERVO2);            // déclaration du servo
-  servo1.write(90);                 // position centrale
+  sword.setPeriodHertz(50);        // fréquence habituelle des servos
+  sword.attach(SWORD_PIN);            // déclaration du servo
+  sword.write(90);                 // position centrale
   
   // Initialize the FastAccelStepper engine
   engine.init();
@@ -94,11 +56,11 @@ void setup() { // put your setup code here, to run once:
 
 void loop() {
   // put your main code here, to run repeatedly:
-  servo1.write(0);
+  sword.write(0);
   delay(750);
-  servo1.write(180);
+  sword.write(180);
   delay(750);
-  servo1.write(90);
+  sword.write(90);
   delay(750);
   turn(90);
   delay(500);

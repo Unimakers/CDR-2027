@@ -33,8 +33,8 @@ const float stepsPerWheelRevolution = MOTOR_STEPS_PER_REV * MICROSTEPS * GEAR_RA
 #define TMC2209_MS2_VALUE  HIGH   // HIGH for 1/16
 
 // PIN des servomoteurs
-#define SERVO1 5
-#define SERVO2 6
+#define CATAPULT_PIN 5
+#define SWORD_PIN 6
 
 // PIN tirette
 #define TIRETTE_PIN 9
