@@ -1,106 +1,126 @@
-// Current main = copy of breadboard/test0_find_pcf.cpp (I2C diagnosis, find the PCF8574).
+// Current main = copy of breadboard/test7_square.cpp (drive in a square).
 // To run another test, copy its file from breadboard/ over this one.
 //
-// TEST 0 C++: find the PCF8574 - I2C bus diagnosis from scratch
+// TEST 7 C++: drive in a square, forever (WHEEL_LEFT_SLOT / WHEEL_RIGHT_SLOT)
 // RESULTS : N/A
 //
-// Standalone: only Arduino + Wire, nothing else from the project.
+// Wiring: same as test 6 (left wheel NP1 U2 = slot 1, right wheel NP2 U2 = slot 3), 24V ON,
+// both PCF8574 answering (0x20 body, 0x21 head).
+// Sequence: forward SQUARE_SIDE_MM, turn 90 deg on the spot, x4, pause, repeat.
+// Wheel directions come from "inverted" in robot_config.h (validated with test 6):
+// a positive move = this wheel drives the robot forward.
 //
-// IMPORTANT, body v1 power: the 3V3 of the board (both PCF8574, I2C pull-ups R5/R6, head
-// board) comes from the TSR1-2433 regulator U1, fed by the 24V. The 3V3 pin of the XIAO is
-// NOT connected to it. With the USB cable only, the PCF are not powered and the bus has no
-// pull-up: nothing answers. -> 24V (battery or supply) must be ON for this test.
+// Tuning:
+//   - side too short/long  -> WHEEL_DIAMETER_MM
+//   - turns over/under 90  -> WHEEL_BASE_MM (distance between the two wheel contact points,
+//                             MEASURE IT on the robot, the value below is a guess)
+//   - turns the wrong way  -> swap the sign of TURN_DIRECTION
 //
-// Steps:
-//   1. Reads SDA (GPIO5) and SCL (GPIO6) with no pull-up at all: both must read 1, pulled up
-//      by R5/R6 to the board 3V3. 0 = board 3V3 missing (no 24V, LED of the 3V3 off?)
-//      or a line shorted to GND.
-//   2. Same reading with the ESP32 internal pull-ups: 0 here = line shorted to GND.
-//   3. Probes 0x20..0x27 (PCF8574) and 0x38..0x3F (PCF8574A) one by one and prints the
-//      Wire error code: 0 = found, 2 = no answer (NACK), 5 = timeout (bus stuck).
-//   4. Full scan at 100 kHz, then at 10 kHz (long wires / weak pull-ups).
-//   5. Full scan with SDA/SCL swapped, in case the wiring is crossed.
-// Expected: 0x20 (body PCF) and 0x21 (head PCF, JP1 soldered).
+// Serial commands (115200): p = pause/resume, d = disable motors (free wheels), e = enable.
 // To run it: copy this file over src/main.cpp.
 
 #include <Arduino.h>
 #include <Wire.h>
+#include "config.h"
+#include "steppers.h"
 
-#define SDA_PIN 5 // D4, net "SDA"
-#define SCL_PIN 6 // D5, net "SCL"
+#define WHEEL_DIAMETER_MM 79.0f // 2026 robot wheels
+#define WHEEL_BASE_MM 300.0f    // TODO: measure (contact point to contact point)
+#define SQUARE_SIDE_MM 500.0f
+#define TURN_DIRECTION 1        // 1 = left turns (counter-clockwise square), -1 = right turns
 
-static void readLines(const char* label, int mode) {
-    pinMode(SDA_PIN, mode);
-    pinMode(SCL_PIN, mode);
-    delay(5);
-    int sda = digitalRead(SDA_PIN);
-    int scl = digitalRead(SCL_PIN);
-    Serial.printf("[LINES] %-22s SDA=%d SCL=%d %s\n", label, sda, scl,
-                  (sda && scl) ? "OK" : "<-- a line is LOW");
+static FastAccelStepper* leftWheel = nullptr;
+static FastAccelStepper* rightWheel = nullptr;
+static bool paused = false;
+static bool motorsOn = false;
+
+// microsteps per mm of wheel travel (same steps/rev on both wheels)
+static float stepsPerMm() {
+    return stepperSlotStepsPerRev(WHEEL_LEFT_SLOT) / (PI * WHEEL_DIAMETER_MM);
 }
 
-static int scan(const char* label) {
-    Serial.printf("[SCAN] %s...\n", label);
-    int found = 0;
-    for (uint8_t address = 1; address < 127; address++) {
-        Wire.beginTransmission(address);
-        uint8_t err = Wire.endTransmission();
-        if (err == 0) {
-            Serial.printf("[SCAN]   device at 0x%02X\n", address);
-            found++;
-        } else if (err == 5) {
-            Serial.printf("[SCAN]   timeout at 0x%02X: bus stuck (SDA or SCL held LOW?)\n", address);
-            break;
-        }
-    }
-    Serial.printf("[SCAN] %s: %d device(s)\n", label, found);
-    return found;
+static long distanceToSteps(float mm) {
+    return lroundf(mm * stepsPerMm());
 }
 
-static void probePcfAddresses() {
-    Serial.println("[PROBE] PCF8574 0x20..0x27 / PCF8574A 0x38..0x3F (0=found 2=NACK 5=timeout)");
-    const uint8_t bases[2] = {0x20, 0x38};
-    for (uint8_t base : bases) {
-        Serial.print("[PROBE] ");
-        for (uint8_t a = base; a < base + 8; a++) {
-            Wire.beginTransmission(a);
-            uint8_t err = Wire.endTransmission();
-            Serial.printf("0x%02X:%d%s  ", a, err, err == 0 ? "*" : "");
+// On-the-spot rotation: each wheel travels an arc of radius WHEEL_BASE_MM / 2
+static long angleToSteps(float deg) {
+    return distanceToSteps(deg * PI / 180.0f * (WHEEL_BASE_MM / 2.0f));
+}
+
+static void setMotors(bool on) {
+    stepperMotorsEnable(on);
+    motorsOn = on;
+}
+
+static void handleSerial() {
+    while (Serial.available()) {
+        char c = Serial.read();
+        if (c == 'p') {
+            paused = !paused;
+            Serial.println(paused ? "[TEST] PAUSED (send p to resume)" : "[TEST] resumed");
+        } else if (c == 'd') {
+            if (leftWheel) leftWheel->forceStop();
+            if (rightWheel) rightWheel->forceStop();
+            setMotors(false);
+        } else if (c == 'e') {
+            setMotors(true);
         }
-        Serial.println();
     }
+}
+
+// Relative move of both wheels, started together, then waits for both to stop
+static void moveWheels(const char* label, long leftSteps, long rightSteps) {
+    while (paused || !motorsOn) { handleSerial(); delay(10); }
+    Serial.printf("[MOVE] %s: L %+ld  R %+ld usteps\n", label, leftSteps, rightSteps);
+    if (leftWheel) leftWheel->move(leftSteps);
+    if (rightWheel) rightWheel->move(rightSteps);
+    while ((leftWheel && leftWheel->isRunning()) || (rightWheel && rightWheel->isRunning())) {
+        handleSerial();
+        delay(1);
+    }
+    delay(300); // let the robot settle before the next move
+}
+
+static void forward(float mm) {
+    long s = distanceToSteps(mm);
+    moveWheels("forward", s, s);
+}
+
+// deg > 0 = counter-clockwise (left), deg < 0 = clockwise (right)
+static void turn(float deg) {
+    long s = angleToSteps(deg);
+    moveWheels("turn", -s, s);
 }
 
 void setup() {
     Serial.begin(115200);
     unsigned long t0 = millis();
-    while (!Serial && millis() - t0 < 5000) delay(10); // USB CDC: wait for the monitor
+    while (!Serial && millis() - t0 < 5000) delay(10);
     delay(500);
-    Serial.println("\n[TEST] Test 0: find the PCF8574");
-    Serial.println("[TEST] reminder: the board 3V3 comes from the 24V, USB alone is not enough");
+    Serial.println("\n[TEST] Test 7: square");
+    Serial.println("[TEST] commands: p = pause/resume, d = disable motors, e = enable");
 
-    // 1-2. Line levels before the I2C driver takes the pins
-    readLines("no pull-up (R5/R6):", INPUT);
-    readLines("ESP32 pull-ups:", INPUT_PULLUP);
+    Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
+    steppersBegin();
+    leftWheel = connectStepperSlot(WHEEL_LEFT_SLOT);
+    rightWheel = connectStepperSlot(WHEEL_RIGHT_SLOT);
+    if (!leftWheel || !rightWheel) {
+        Serial.println("[TEST] ERROR: a wheel is not usable, check robot_config.h");
+    }
+    Serial.printf("[TEST] %.2f usteps/mm, side %.0f mm = %ld usteps, 90 deg = %ld usteps per wheel\n",
+                  stepsPerMm(), SQUARE_SIDE_MM, distanceToSteps(SQUARE_SIDE_MM), angleToSteps(90));
 
-    // 3-4. Normal wiring
-    if (!Wire.begin(SDA_PIN, SCL_PIN, 100000)) Serial.println("[TEST] Wire.begin failed");
-    probePcfAddresses();
-    scan("scan 100 kHz");
-    Wire.setClock(10000);
-    scan("scan 10 kHz");
-    Wire.end();
-
-    // 5. Swapped lines
-    Wire.begin(SCL_PIN, SDA_PIN, 100000);
-    scan("scan SDA/SCL SWAPPED");
-    Wire.end();
-
-    Wire.begin(SDA_PIN, SCL_PIN, 100000);
-    Serial.println("[TEST] done, normal wiring scan repeated every 2 s (plug the 24V to see the PCF appear)");
+    setMotors(true);
+    Serial.println("[TEST] starting in 3 s...");
+    delay(3000);
 }
 
 void loop() {
+    for (int i = 0; i < 4; i++) {
+        forward(SQUARE_SIDE_MM);
+        turn(TURN_DIRECTION * 90.0f);
+    }
+    Serial.printf("[TEST] square done (uptime %lu ms)\n", millis());
     delay(2000);
-    scan("rescan");
 }

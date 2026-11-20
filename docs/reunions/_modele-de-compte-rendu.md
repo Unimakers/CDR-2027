@@ -1,8 +1,8 @@
----
+<---
 layout: default
 title: "Réunion JJ/MM/AAAA"
-parent: "Réunions[-modèle]"
----
+parent: "Réunions"
+--->
 
 # Compte rendu de réunion
 
