@@ -33,7 +33,7 @@ const StepperSlot STEPPER_SLOTS[STEPPER_SLOT_COUNT] = {
     {STEP_1_PIN, DIR_1_PIN, false,    -1,          -1,         -1,         -1},   // slot 0: actuator (back elevator in 2026)
     {STEP_2_PIN, DIR_2_PIN, true,     200,         16,         4494,       7490}, // slot 1: LEFT wheel
     {STEP_3_PIN, DIR_3_PIN, false,    -1,          -1,         -1,         -1},   // slot 2: actuator (front elevator in 2026)
-    {STEP_4_PIN, DIR_4_PIN, false,    200,         16,         4494,       7490}, // slot 3: RIGHT wheel
+    {STEP_4_PIN, DIR_4_PIN, true,     200,         16,         4494,       7490}, // slot 3: RIGHT wheel
 };
 // Wheel values = Firmware-CDR2026-MainBot (same board, validated on the 2026 robot):
 // 68 mm wheels, 200 steps x 1/16 -> 14.98 usteps/mm, 300 mm/s = 4494 Hz, 500 mm/s2 = 7490 Hz/s,
