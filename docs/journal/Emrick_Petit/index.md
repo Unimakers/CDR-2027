@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Emrick_Petit
+title: Emrick Petit
 parent: Journal de bord
 has_children: true
 ---
