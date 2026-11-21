@@ -1,7 +1,7 @@
 <---
 layout: default
 title: "AAAA-MM-JJ : titre"
-parent: Emrick_Petit
+parent: Emrick Petit
 grand_parent: Journal de bord
 --->
 
@@ -9,7 +9,7 @@ grand_parent: Journal de bord
 
 **Type de séance :** Planifiée / libre / Session de travail · **Durée :** <span><code style="color: blue;">Insert duration</code></span>
 
-## Réalisé durant la scéance :
+## Réalisé durant la séance :
 
 ### action 1
 
@@ -17,11 +17,11 @@ grand_parent: Journal de bord
 
 ### action 3
 
-## Conclusion de la scéance :
+## Conclusion de la séance :
 
 
 
-## A faire lors de la prochaine scéance :
+## À faire lors de la prochaine séance :
 
 | Type de tâche | Description | Priorité |
 |---------------|-------------|----------|
