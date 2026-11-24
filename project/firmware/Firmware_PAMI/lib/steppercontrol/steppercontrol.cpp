@@ -1,30 +1,17 @@
 #include <Arduino.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <FastAccelStepper.h>
-#include <ESP32Servo.h>
 #include <TMCStepper.h>
 #include <Wire.h>
-#include "config.h"
-#include "functions.h"
 
+// Bibliothèques créées
+#include <config.h>
+#include <converting.h>
+#include <steppercontrol.h>
 
 FastAccelStepperEngine engine;
 FastAccelStepper *leftmotor = nullptr;
 FastAccelStepper *rightmotor = nullptr;
-
-Servo sword;
-Servo catapult;
-
-float DistanceToStep(float distanceMm) // converti une distance (en mm) en Steps
-{
-  return lroundf((distanceMm / wheelCircumferenceMm *stepsPerWheelRevolution)/2);
-}
-
-float AngleToStep(float angleDeg)  // converti un angle (en degré) en Steps
-{
-  float wheelTravelMm = (angleDeg * PI / 180.0f) * (WHEEL_BASE_MM / 4);
-  return lroundf(wheelTravelMm / wheelCircumferenceMm * stepsPerWheelRevolution);
-}
 
 void WaitForMotors() // attend que les moteurs soient arrêtés
 {
@@ -46,3 +33,28 @@ void turn(float angle) // Rotation prenant en compte l'inversion des moteurs (an
   rightmotor->move(!RIGHT_MOTOR_INVERTED ? -AngleToStep(angle) : AngleToStep(angle));
   WaitForMotors();
 }
+
+float setAngle(float start_angleDeg, float wanted_angleDeg)
+{
+    float angle = wanted_angleDeg - start_angleDeg;
+    turn(angle);
+    return updateAngle(start_angleDeg, angle);
+}
+
+
+
+
+// En cours de travail - Ne pas toucher à moins d'être sûr de ce qu'on fait
+
+// void interrupt()
+// {
+//   if (leftmotor->isRunning() || rightmotor->isRunning())
+//   {
+//     int32_t Lrestant = leftmotor->targetPos() - leftmotor->getCurrentPosition();
+//     int32_t Rrestant = rightmotor->targetPos() - rightmotor->getCurrentPosition();
+//     Serial.printf("%i ; %i\n", Lrestant, Rrestant);
+//     Serial.printf("%i ; %i\n", Lrestant - Lrestant, Rrestant - Rrestant);
+//     leftmotor->move(!LEFT_MOTOR_INVERTED ? Lrestant : -Lrestant);
+//     rightmotor->move(!RIGHT_MOTOR_INVERTED ? -Rrestant : Rrestant);
+//   }
+// }

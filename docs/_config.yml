@@ -28,6 +28,9 @@ gh_edit_branch: "main"
 gh_edit_source: docs
 gh_edit_view_mode: "edit"
 
+back_to_top: true
+back_to_top_text: "Retourner en haut de page"
+
 # Encadrés utilisables dans les pages :
 #   {: .a_modifier }      contenu d'exemple à remplacer par le vôtre
 #   {: .a_supprimer }     consigne du template, à supprimer avant le rendu
