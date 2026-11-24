@@ -14,11 +14,11 @@
 #define LEFT_MOTOR_INVERTED   true 
 #define RIGHT_MOTOR_INVERTED  false
 
-#define  STEPPER_SPEED_HZ 5000
-#define STEPPER_ACCELERATION 1000
+#define STEPPER_SPEED_HZ 5000
+#define STEPPER_ACCELERATION 2000
 
 // Pour les déplacements linéaires
-#define WHEEL_DIAMETER_MM    62.4f   // Diamètre exterieur des roues (en mm)
+#define WHEEL_DIAMETER_MM    60.6f   // Diamètre exterieur des roues (en mm)
 #define MICROSTEPS           16      // Microstepping réglé sur le TMC2209
 #define GEAR_RATIO           1.0f    // 1.0 = pas de réduction
 #define MOTOR_STEPS_PER_REV  200     // Pas par tour de moteur (1.8 deg/pas motor)
@@ -27,7 +27,7 @@ const float wheelCircumferenceMm = PI * WHEEL_DIAMETER_MM; // calcul de la circo
 const float stepsPerWheelRevolution = MOTOR_STEPS_PER_REV * MICROSTEPS * GEAR_RATIO; // calcul du nombre de step par tour de stepper
 
 // Pour les rotations et virages
-#define WHEEL_BASE_MM 96.6f  // Distance entre les deux points de contact des roues (en mm)
+#define WHEEL_BASE_MM 91.45f  // Distance entre les deux points de contact des roues (en mm)
 
 #define TMC2209_MS1_VALUE  HIGH   // HIGH for 1/16
 #define TMC2209_MS2_VALUE  HIGH   // HIGH for 1/16
@@ -42,8 +42,13 @@ const float stepsPerWheelRevolution = MOTOR_STEPS_PER_REV * MICROSTEPS * GEAR_RA
 #define SWITCH_PIN 8
 
 // PIN du télémètre à ultrason
-//#define TRIGER_PIN 44
-//#define ECHO_PIN 43
+#define TRIGER_PIN 44
+#define ECHO_PIN 43
 
 // intervalles
 #define SONAR_PING_INTERVAL 33
+
+// Coordonées de départ
+#define START_X 0.0f // (mm)
+#define START_Y 0.0f // (mm)
+#define START_ANGLE 0.0f // (degrés)
