@@ -75,8 +75,8 @@ static_assert(WHEEL_LEFT_SLOT != WHEEL_RIGHT_SLOT, "Both wheels cannot use the s
 // Set real values before calling enableFiltering(): the library stores them unsigned,
 // so -1 would turn into 65535 / 255 and filter out every point.
 // ---------------------------------------------------------------------------
-#define LD06_MIN_DISTANCE -1        // in mm
-#define LD06_MAX_DISTANCE -1        // in mm
+#define LD06_MIN_DISTANCE 20        // in mm
+#define LD06_MAX_DISTANCE 500       // in mm
 #define LD06_MIN_ANGLE -1           // in degrees
 #define LD06_MAX_ANGLE -1           // in degrees
 #define LD06_INTENSITY_THRESHOLD -1 // 0-255
