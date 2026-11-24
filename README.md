@@ -20,7 +20,6 @@ Cette documentation sera mise à jour tout au long de l'année à chaque étape 
 - Brett Legret
 - Emma Vilain
 - Emrick Petit
-- Enzo Deviliers
 - Gauthier Henriques
 - Martin Milon
 - Paul Lapeyronnie

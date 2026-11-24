@@ -6,8 +6,14 @@ grand_parent: Journal de bord
 --->
 
 # Titre
-
+{: .no_toc}
 **Type de séance :** Planifiée / libre / Session de travail · **Durée :** <span><code style="color: blue;">Insert duration</code></span>
+
+## Table des matières
+{: .no_toc .text-delta }
+
+* TOC
+{:toc}
 
 ## Réalisé durant la séance :
 
