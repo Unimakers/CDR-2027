@@ -71,18 +71,20 @@ void setup()
 void loop()
 {
   sword.write(90);
-
-  // while(1)
-  // {
-  //   sword.write(0);
-  //   delay(500);
-  //   sword.write(90);
-  //   delay(500);
-  //   sword.write(180);
-  //   delay(500);
-  //   sword.write(90);
-  //   delay(500);
-  // }
+  sword.write(0);
+  delay(500);
+  sword.write(90);
+  delay(500);
+  sword.write(180);
+  delay(500);
+  sword.write(90);
+  delay(500);
+  go(250);
+  turn(90);
+  turn(-180);
+  turn(90);
+  go(-250);
+  delay(250);
   // Serial.println(detector.read());
   // delay(500);  
 }
